@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="AlarmSystem:jar">
+    <output-path>Z:/</output-path>
+    <root id="archive" name="AlarmSystem.jar">
+      <element id="module-output" name="AlarmSystem" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../RaspiDJControl/lib/junit.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../RaspiDJControl/lib/pi4j-core.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../RaspiDJControl/lib/pi4j-device.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../RaspiDJControl/lib/pi4j-example.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../RaspiDJControl/lib/pi4j-gpio-extension.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$PROJECT_DIR$/../RaspiDJControl/lib/pi4j-service.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
