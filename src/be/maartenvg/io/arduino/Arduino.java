@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static be.maartenvg.io.arduino.ArduinoCommand.*;
+import static be.maartenvg.io.arduino.ArduinoCommand.ACKNOWLEDGE;
 
 /**
  * Created by Maarten on 4/07/2015.
@@ -56,6 +56,8 @@ public class Arduino {
             listener.onArduinoValuesChanged(values);
         }
     }
+
+
 
     public int[] getValues(){
         return values;

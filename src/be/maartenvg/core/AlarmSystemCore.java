@@ -2,6 +2,7 @@ package be.maartenvg.core;
 
 import be.maartenvg.io.arduino.Arduino;
 import be.maartenvg.io.arduino.ArduinoListenerAdapter;
+import be.maartenvg.io.parse.PushMessageAPI;
 import be.maartenvg.io.peripherals.RotaryDirection;
 import be.maartenvg.io.peripherals.RotaryEncoder;
 import be.maartenvg.io.peripherals.RotaryEncoderListener;
@@ -21,23 +22,28 @@ import java.util.List;
 import java.util.stream.IntStream;
 
 public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEncoderListener, Runnable {
+    private final static int LCD_ROW_1 = 0;
+    private final static int LCD_ROW_2 = 1;
+
     private final Arduino arduino;
     private final GpioLcdDisplay lcd;
     private final RotaryEncoder rotaryEncoder;
+    private final PushMessageAPI pushMessageAPI;
     private final String[] sensorNames;
-    private AlarmStatus status;
-
-    private final static int LCD_ROW_1 = 0;
-    private final static int LCD_ROW_2 = 1;
 
     private Thread workerThread;
     private Thread alarmCountdownThread;
     private Thread alarmCooldownThread;
 
-    public AlarmSystemCore(Arduino arduino, GpioLcdDisplay lcd, RotaryEncoder rotaryEncoder, String[] sensorNames) throws IOException {
+    private AlarmStatus status;
+    private int menuValue = 0;
+    private List<String> activeSensorNames = new ArrayList<>();
+
+    public AlarmSystemCore(Arduino arduino, GpioLcdDisplay lcd, RotaryEncoder rotaryEncoder, PushMessageAPI pushMessageAPI, String[] sensorNames) throws IOException {
         this.arduino = arduino;
         this.lcd = lcd;
         this.rotaryEncoder = rotaryEncoder;
+        this.pushMessageAPI = pushMessageAPI;
         this.sensorNames = sensorNames;
         this.status = AlarmStatus.ARMED;
 
@@ -54,7 +60,7 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
     private class MyHandler implements HttpHandler {
         @Override
         public void handle(HttpExchange t) throws IOException {
-            String response = "{ status: \"" + status.name() + "\", activeSensors:\"" + String.join(",", activeSensorNames) + "\"}";
+            String response = "{status: \"" + status.name() + "\", activeSensors:\"" + String.join(",", activeSensorNames) + "\"}";
             t.sendResponseHeaders(200, response.getBytes("UTF-8").length);
             OutputStream os = t.getResponseBody();
             os.write(response.getBytes("UTF-8"));
@@ -88,16 +94,20 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
 
         if(sum > 0){ // A sensor is activated
 
+            if(alarmCooldownThread != null) alarmCooldownThread.interrupt();
+
             if(status == AlarmStatus.ARMED && (alarmCountdownThread == null || !alarmCountdownThread.isAlive())){
                 alarmCountdownThread = new AlarmCountdownThread(
-                        this,
-                        lcd,
-                        arduino,
-                        5000
+                        this,               // AlarmSystemCore
+                        lcd,                // GpioLcdDisplay
+                        arduino,            // Arduino
+                        pushMessageAPI,     // PushMessageAPI
+                        activeSensorNames,  // Sensors that triggered the countdown
+                        5000                // Countdown length
                 );
                 alarmCountdownThread.start();
+                updateActiveSensorNames();
             }
-            if(alarmCooldownThread != null) alarmCooldownThread.interrupt();
 
         } else { // No sensors are activated
 
@@ -105,11 +115,8 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
                 alarmCooldownThread = new AlarmCooldownThread(this, arduino, 7500);
                 alarmCooldownThread.start();
             }
-
         }
     }
-
-    int menuValue = 0;
 
     @Override
     public void onRotaryEncoderRotated(RotaryDirection rotaryDirection) {
@@ -126,7 +133,13 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
             setStatus(AlarmStatus.MENU);
     }
 
-    List<String> activeSensorNames = new ArrayList<>();
+    private void updateActiveSensorNames(){
+        activeSensorNames.clear();
+        int[] arduinoValues = arduino.getValues();
+        for(int i=0; i< arduinoValues.length; i++){
+            if(arduinoValues[i] > 0) activeSensorNames.add(sensorNames[i]);
+        }
+    }
 
     @Override
     public void run() {
@@ -135,11 +148,7 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
 
         while(!Thread.interrupted()) {
             try {
-                activeSensorNames.clear();
-                int[] arduinoValues = arduino.getValues();
-                for(int i=0; i< arduinoValues.length; i++){
-                    if(arduinoValues[i] > 0) activeSensorNames.add(sensorNames[i]);
-                }
+                updateActiveSensorNames();
                 if(sensorIndex >= activeSensorNames.size()) sensorIndex = 0;
                 String sensorName = "No active sensor";
                 boolean sensorActive = false;
