@@ -1,5 +1,6 @@
 package be.maartenvg.core;
 
+import be.maartenvg.io.api.JsonHttpHandler;
 import be.maartenvg.io.arduino.Arduino;
 import be.maartenvg.io.arduino.ArduinoListenerAdapter;
 import be.maartenvg.io.parse.PushMessageAPI;
@@ -8,12 +9,9 @@ import be.maartenvg.io.peripherals.RotaryEncoder;
 import be.maartenvg.io.peripherals.RotaryEncoderListener;
 import com.pi4j.component.lcd.LCDTextAlignment;
 import com.pi4j.component.lcd.impl.GpioLcdDisplay;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -52,20 +50,21 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
         lcd.clear();
 
         HttpServer server = HttpServer.create(new InetSocketAddress(80), 0);
-        server.createContext("/status", new MyHandler());
+        server.createContext("/status", new JsonHttpHandler(this));
         server.setExecutor(null);
         server.start();
     }
 
-    private class MyHandler implements HttpHandler {
-        @Override
-        public void handle(HttpExchange t) throws IOException {
-            String response = "{status: \"" + status.name() + "\", activeSensors:\"" + String.join(",", activeSensorNames) + "\"}";
-            t.sendResponseHeaders(200, response.getBytes("UTF-8").length);
-            OutputStream os = t.getResponseBody();
-            os.write(response.getBytes("UTF-8"));
-            os.close();
-        }
+    public String[] getSensorNames() {
+        return sensorNames;
+    }
+
+    public List<String> getActiveSensorNames() {
+        return activeSensorNames;
+    }
+
+    public void setActiveSensorNames(List<String> activeSensorNames) {
+        this.activeSensorNames = activeSensorNames;
     }
 
     public AlarmStatus getStatus() {
@@ -112,7 +111,12 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
         } else { // No sensors are activated
 
             if(status == AlarmStatus.SIRENS_ON || status == AlarmStatus.COUNTDOWN){
-                alarmCooldownThread = new AlarmCooldownThread(this, arduino, 7500);
+                alarmCooldownThread = new AlarmCooldownThread(
+                        this,
+                        arduino,
+                        7500,
+                        pushMessageAPI
+                );
                 alarmCooldownThread.start();
             }
         }

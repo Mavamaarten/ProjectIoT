@@ -5,6 +5,7 @@ import be.maartenvg.io.arduino.ArduinoCommand;
 import be.maartenvg.io.parse.PushMessageAPI;
 import com.pi4j.component.lcd.LCDTextAlignment;
 import com.pi4j.component.lcd.impl.GpioLcdDisplay;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -33,7 +34,9 @@ public class AlarmCountdownThread extends Thread {
         int countdown = delay / 1000;
         arduino.sendCommand(ArduinoCommand.ENABLE_WARNING_LED);
         alarmSystemCore.setStatus(AlarmStatus.COUNTDOWN);
-        pushMessageAPI.sendPushMessage("Intrusion alert!", "Countdown activated. Triggered sensor(s): " + String.join(",", triggeredSensors));
+        JSONObject object = new JSONObject();
+        object.put("activeSensors", triggeredSensors);
+        pushMessageAPI.sendPushMessage("Intrusion alert!", "Countdown activated.", object.toString());
 
         while(!interrupted() && countdown > 0){
             lcd.writeln(LCD_ROW_1, "COUNTDOWN");
@@ -52,7 +55,9 @@ public class AlarmCountdownThread extends Thread {
         if(!interrupted()){
             arduino.sendCommand(ArduinoCommand.ENABLE_SIREN);
             alarmSystemCore.setStatus(AlarmStatus.SIRENS_ON);
-            pushMessageAPI.sendPushMessage("Intrusion alert! ", "Alarm sirens activated. Triggered sensor(s): " + String.join(",", triggeredSensors));
+            object = new JSONObject();
+            object.put("activeSensors", triggeredSensors);
+            pushMessageAPI.sendPushMessage("Intrusion alert!", "Alarm sirens activated.", object.toString());
         }
     }
 }
