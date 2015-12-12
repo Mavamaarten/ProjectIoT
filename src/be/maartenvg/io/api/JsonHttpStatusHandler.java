@@ -9,19 +9,21 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
 
-public class JsonHttpHandler implements HttpHandler {
+public class JsonHttpStatusHandler implements HttpHandler {
     private final AlarmSystemCore alarmSystemCore;
 
-    public JsonHttpHandler(AlarmSystemCore alarmSystemCore) {
+    public JsonHttpStatusHandler(AlarmSystemCore alarmSystemCore) {
         this.alarmSystemCore = alarmSystemCore;
     }
 
     @Override
     public void handle(HttpExchange t) throws IOException {
+        if (!t.getRequestMethod().equals("GET")) return;
+
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("status", alarmSystemCore.getStatus().name());
-        jsonObject.put("sensors", alarmSystemCore.getSensorNames());
-        jsonObject.put("activeSensors", alarmSystemCore.getActiveSensorNames());
+        jsonObject.put("sensorNames", alarmSystemCore.getSensorNames());
+        jsonObject.put("activeSensorNames", alarmSystemCore.getActiveSensorNames());
         StringWriter stringWriter = new StringWriter();
         jsonObject.write(stringWriter);
         String response = stringWriter.toString();

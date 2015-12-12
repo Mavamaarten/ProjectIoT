@@ -1,7 +1,9 @@
 package be.maartenvg.core;
 
-import be.maartenvg.io.api.JsonHttpHandler;
+import be.maartenvg.io.api.JsonHttpAPIHandler;
+import be.maartenvg.io.api.JsonHttpStatusHandler;
 import be.maartenvg.io.arduino.Arduino;
+import be.maartenvg.io.arduino.ArduinoCommand;
 import be.maartenvg.io.arduino.ArduinoListenerAdapter;
 import be.maartenvg.io.parse.PushMessageAPI;
 import be.maartenvg.io.peripherals.RotaryDirection;
@@ -10,6 +12,7 @@ import be.maartenvg.io.peripherals.RotaryEncoderListener;
 import com.pi4j.component.lcd.LCDTextAlignment;
 import com.pi4j.component.lcd.impl.GpioLcdDisplay;
 import com.sun.net.httpserver.HttpServer;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -50,7 +53,8 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
         lcd.clear();
 
         HttpServer server = HttpServer.create(new InetSocketAddress(80), 0);
-        server.createContext("/status", new JsonHttpHandler(this));
+        server.createContext("/status", new JsonHttpStatusHandler(this));
+        server.createContext("/api", new JsonHttpAPIHandler(this));
         server.setExecutor(null);
         server.start();
     }
@@ -87,6 +91,24 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
         workerThread.interrupt();
     }
 
+    public void disarm(){
+        if(alarmCountdownThread != null && alarmCountdownThread.isAlive()) alarmCountdownThread.interrupt();
+        if(alarmCooldownThread != null && alarmCooldownThread.isAlive()) alarmCooldownThread.interrupt();
+        arduino.sendCommand(ArduinoCommand.DISABLE_WARNING_LED);
+        arduino.sendCommand(ArduinoCommand.DISABLE_SIREN);
+        setStatus(AlarmStatus.DISARMED);
+        pushMessageAPI.sendPushMessage("Alarm disarmed", "SmartAlarm", new JSONObject().put("status", "disarmed").toString());
+    }
+
+    public void arm(){
+        if(alarmCountdownThread != null && alarmCountdownThread.isAlive()) alarmCountdownThread.interrupt();
+        if(alarmCooldownThread != null && alarmCooldownThread.isAlive()) alarmCooldownThread.interrupt();
+        arduino.sendCommand(ArduinoCommand.DISABLE_WARNING_LED);
+        arduino.sendCommand(ArduinoCommand.DISABLE_SIREN);
+        setStatus(AlarmStatus.ARMED);
+        pushMessageAPI.sendPushMessage("Alarm armed", "SmartAlarm", new JSONObject().put("status", "armed").toString());
+    }
+
     @Override
     public void onArduinoValuesChanged(int[] values) {
         int sum = IntStream.of(values).reduce(0 ,(a, b) -> a + b);
@@ -102,7 +124,7 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
                         arduino,            // Arduino
                         pushMessageAPI,     // PushMessageAPI
                         activeSensorNames,  // Sensors that triggered the countdown
-                        5000                // Countdown length
+                        10000               // Countdown length
                 );
                 alarmCountdownThread.start();
                 updateActiveSensorNames();
@@ -114,7 +136,7 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
                 alarmCooldownThread = new AlarmCooldownThread(
                         this,
                         arduino,
-                        7500,
+                        2 * 60000,
                         pushMessageAPI
                 );
                 alarmCooldownThread.start();
