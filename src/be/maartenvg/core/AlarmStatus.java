@@ -5,5 +5,5 @@ public enum AlarmStatus {
     DISARMED,
     COUNTDOWN,
     SIRENS_ON,
-    MENU
+    SETTINGS
 }

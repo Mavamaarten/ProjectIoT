@@ -1,8 +1,11 @@
 package be.maartenvg.io.api;
 
 import be.maartenvg.core.AlarmSystemCore;
+import be.maartenvg.settings.Settings;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -13,9 +16,12 @@ import java.util.Map;
 
 public class JsonHttpAPIHandler implements HttpHandler {
     private final AlarmSystemCore alarmSystemCore;
+    private final Settings settings;
+    private final Log log = LogFactory.getLog(JsonHttpAPIHandler.class);
 
     public JsonHttpAPIHandler(AlarmSystemCore alarmSystemCore) {
         this.alarmSystemCore = alarmSystemCore;
+        settings = Settings.getInstance();
     }
 
     @Override
@@ -31,29 +37,37 @@ public class JsonHttpAPIHandler implements HttpHandler {
         String PIN = queryParams.get("pin");
         String action = queryParams.get("action");
 
-        if(PIN.equals("1234")){ //TODO make setting rather than hardcoded pin
-            if(action.equals("arm")){
-                alarmSystemCore.arm();
-            }
-            else{
-                alarmSystemCore.disarm();
-            }
-
-            JSONObject jsonObject = new JSONObject();
-            jsonObject.put("result", "OK");
-
-            StringWriter stringWriter = new StringWriter();
-            jsonObject.write(stringWriter);
-            String response = stringWriter.toString();
-            t.sendResponseHeaders(200, response.getBytes("UTF-8").length);
-            OutputStream os = t.getResponseBody();
-            os.write(response.getBytes("UTF-8"));
-            os.close();
-            t.close();
+        if(action.equals("setpin")){
+            settings.setPin(PIN);
+            settings.save();
+            sendOKResponse(t);
+            log.warn("PIN changed to " + PIN);
+        }
+        else if(action.equals("arm") && PIN.equals(Settings.getInstance().getPin())){
+            alarmSystemCore.arm();
+            sendOKResponse(t);
+        }
+        else if (action.equals("disarm") && PIN.equals(Settings.getInstance().getPin())){
+            alarmSystemCore.disarm();
+            sendOKResponse(t);
         } else {
+            log.warn("Incorrect PIN entered by " + t.getRemoteAddress().toString() + " (action: " + action + ", entered PIN:" + PIN + ")");
             t.sendResponseHeaders(401, 0);
             t.close();
         }
+    }
+
+    private void sendOKResponse(HttpExchange t) throws IOException {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("result", "OK");
+        StringWriter stringWriter = new StringWriter();
+        jsonObject.write(stringWriter);
+        String response = stringWriter.toString();
+        t.sendResponseHeaders(200, response.getBytes("UTF-8").length);
+        OutputStream os = t.getResponseBody();
+        os.write(response.getBytes("UTF-8"));
+        os.close();
+        t.close();
     }
 
     public Map<String, String> queryToMap(String query){

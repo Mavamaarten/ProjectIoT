@@ -53,7 +53,7 @@ public class Arduino {
 
     private void notifyListeners(int[] values){
         for(ArduinoListener listener : listeners){
-            listener.onArduinoValuesChanged(values);
+            listener.onSensorReadingsChanged(values);
         }
     }
 

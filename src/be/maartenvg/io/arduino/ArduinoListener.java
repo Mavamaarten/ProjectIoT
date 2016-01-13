@@ -5,5 +5,5 @@ package be.maartenvg.io.arduino;
  */
 public interface ArduinoListener {
     void onArduinoValueChanged(int channel, int value);
-    void onArduinoValuesChanged(int[] values);
+    void onSensorReadingsChanged(int[] values);
 }

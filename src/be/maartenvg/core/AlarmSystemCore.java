@@ -1,17 +1,24 @@
 package be.maartenvg.core;
 
+import be.maartenvg.core.menu.MenuItem;
 import be.maartenvg.io.api.JsonHttpAPIHandler;
 import be.maartenvg.io.api.JsonHttpStatusHandler;
 import be.maartenvg.io.arduino.Arduino;
 import be.maartenvg.io.arduino.ArduinoCommand;
 import be.maartenvg.io.arduino.ArduinoListenerAdapter;
+import be.maartenvg.io.network.LocalIPUtility;
 import be.maartenvg.io.parse.PushMessageAPI;
 import be.maartenvg.io.peripherals.RotaryDirection;
 import be.maartenvg.io.peripherals.RotaryEncoder;
 import be.maartenvg.io.peripherals.RotaryEncoderListener;
+import be.maartenvg.settings.Settings;
+import be.maartenvg.threads.AlarmCooldownThread;
+import be.maartenvg.threads.AlarmCountdownThread;
 import com.pi4j.component.lcd.LCDTextAlignment;
-import com.pi4j.component.lcd.impl.GpioLcdDisplay;
+import com.pi4j.component.lcd.impl.I2CLcdDisplay;
 import com.sun.net.httpserver.HttpServer;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -20,30 +27,34 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEncoderListener, Runnable {
     private final static int LCD_ROW_1 = 0;
     private final static int LCD_ROW_2 = 1;
 
+    private final Log log = LogFactory.getLog(AlarmSystemCore.class);
+
     private final Arduino arduino;
-    private final GpioLcdDisplay lcd;
-    private final RotaryEncoder rotaryEncoder;
+    private final I2CLcdDisplay lcd;
     private final PushMessageAPI pushMessageAPI;
     private final String[] sensorNames;
+    private final Settings settings = Settings.getInstance();
+    private final String ipAddress;
 
     private Thread workerThread;
     private Thread alarmCountdownThread;
     private Thread alarmCooldownThread;
 
     private AlarmStatus status;
-    private int menuValue = 0;
+    private MenuItem highlightedMenuItem = MenuItem.SHOW_IP_ADDRESS;
+    private MenuItem selectedMenuItem = null;
     private List<String> activeSensorNames = new ArrayList<>();
 
-    public AlarmSystemCore(Arduino arduino, GpioLcdDisplay lcd, RotaryEncoder rotaryEncoder, PushMessageAPI pushMessageAPI, String[] sensorNames) throws IOException {
+    public AlarmSystemCore(Arduino arduino, I2CLcdDisplay lcd, RotaryEncoder rotaryEncoder, PushMessageAPI pushMessageAPI, String[] sensorNames) throws IOException {
         this.arduino = arduino;
         this.lcd = lcd;
-        this.rotaryEncoder = rotaryEncoder;
         this.pushMessageAPI = pushMessageAPI;
         this.sensorNames = sensorNames;
         this.status = AlarmStatus.ARMED;
@@ -57,6 +68,8 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
         server.createContext("/api", new JsonHttpAPIHandler(this));
         server.setExecutor(null);
         server.start();
+
+        this.ipAddress = LocalIPUtility.getLocalIp();
     }
 
     public String[] getSensorNames() {
@@ -84,6 +97,8 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
 
         workerThread = new Thread(this);
         workerThread.start();
+
+        log.info("Core WorkerThread started");
     }
 
     public void stop() throws CoreException {
@@ -98,6 +113,7 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
         arduino.sendCommand(ArduinoCommand.DISABLE_SIREN);
         setStatus(AlarmStatus.DISARMED);
         pushMessageAPI.sendPushMessage("Alarm disarmed", "SmartAlarm", new JSONObject().put("status", "disarmed").toString());
+        log.info("Alarm disarmed");
     }
 
     public void arm(){
@@ -107,10 +123,11 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
         arduino.sendCommand(ArduinoCommand.DISABLE_SIREN);
         setStatus(AlarmStatus.ARMED);
         pushMessageAPI.sendPushMessage("Alarm armed", "SmartAlarm", new JSONObject().put("status", "armed").toString());
+        log.info("Alarm armed");
     }
 
     @Override
-    public void onArduinoValuesChanged(int[] values) {
+    public void onSensorReadingsChanged(int[] values) {
         int sum = IntStream.of(values).reduce(0 ,(a, b) -> a + b);
 
         if(sum > 0){ // A sensor is activated
@@ -120,15 +137,17 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
             if(status == AlarmStatus.ARMED && (alarmCountdownThread == null || !alarmCountdownThread.isAlive())){
                 alarmCountdownThread = new AlarmCountdownThread(
                         this,               // AlarmSystemCore
-                        lcd,                // GpioLcdDisplay
+                        lcd,                // LcdDisplay
                         arduino,            // Arduino
                         pushMessageAPI,     // PushMessageAPI
                         activeSensorNames,  // Sensors that triggered the countdown
-                        10000               // Countdown length
+                        settings.getCountdownDuration()  // Countdown length
                 );
                 alarmCountdownThread.start();
                 updateActiveSensorNames();
             }
+
+            log.warn("One or more sensors activated: " + activeSensorNames.stream().collect(Collectors.joining(", ")));
 
         } else { // No sensors are activated
 
@@ -136,27 +155,78 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
                 alarmCooldownThread = new AlarmCooldownThread(
                         this,
                         arduino,
-                        2 * 60000,
+                        settings.getCooldownDuration() + settings.getCountdownDuration(),
                         pushMessageAPI
                 );
                 alarmCooldownThread.start();
             }
+
+            log.info("No more sensors active.");
         }
     }
 
     @Override
     public void onRotaryEncoderRotated(RotaryDirection rotaryDirection) {
-        if(rotaryDirection == RotaryDirection.LEFT) menuValue--; else menuValue++;
+        if(status == AlarmStatus.SETTINGS && selectedMenuItem == null){
+            int currentValue = highlightedMenuItem.getValue();
+            if(rotaryDirection == RotaryDirection.LEFT) currentValue--; else currentValue++;
+            if(currentValue >= MenuItem.count()) currentValue = 0;
+            if(currentValue < 0) currentValue = MenuItem.count() - 1;
+            highlightedMenuItem = MenuItem.findByValue(currentValue);
+        } else if (selectedMenuItem != null){
+
+            switch(selectedMenuItem){
+                case EDIT_COUNTDOWN:
+                    int countdownValue = settings.getCountdownDuration() / 1000;
+                    if(rotaryDirection == RotaryDirection.LEFT) countdownValue--; else countdownValue++;
+                    if(countdownValue < 0) countdownValue = 0;
+                    settings.setCountdownDuration(countdownValue * 1000);
+                    settings.save();
+                    break;
+                case EDIT_COOLDOWN:
+                    int cooldownValue = settings.getCooldownDuration() / 1000;
+                    if(rotaryDirection == RotaryDirection.LEFT) cooldownValue--; else cooldownValue++;
+                    if(cooldownValue < 0) cooldownValue = 0;
+                    settings.setCooldownDuration(cooldownValue * 1000);
+                    settings.save();
+                    break;
+            }
+        }
     }
 
     @Override
     public void onRotaryEncoderClicked() {
-        if(status == AlarmStatus.MENU)
-            setStatus(AlarmStatus.ARMED);
-        else if(status == AlarmStatus.ARMED)
-            setStatus(AlarmStatus.DISARMED);
-        else if(status == AlarmStatus.DISARMED)
-            setStatus(AlarmStatus.MENU);
+        switch(status){
+            case ARMED:
+                disarm();
+                break;
+            case DISARMED:
+                setStatus(AlarmStatus.SETTINGS);
+                log.info("Entered settings menu");
+                break;
+            case COUNTDOWN:
+                disarm();
+                break;
+            case SIRENS_ON:
+                disarm();
+                break;
+            case SETTINGS:
+                if(highlightedMenuItem == MenuItem.BACK){
+                    highlightedMenuItem = MenuItem.findByValue(0);
+                    selectedMenuItem = null;
+                    arm();
+                    return;
+                }
+
+                if(selectedMenuItem == null){
+                    selectedMenuItem = highlightedMenuItem;
+                    log.info("Menu item selected: " + selectedMenuItem.getMenuTitle());
+                } else {
+                    selectedMenuItem = null;
+                    log.info("Back to main menu");
+                }
+                break;
+        }
     }
 
     private void updateActiveSensorNames(){
@@ -206,17 +276,38 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
                         lcd.writeln(LCD_ROW_2, sensorName, LCDTextAlignment.ALIGN_CENTER);
                         break;
 
-                    case MENU:
-                        lcd.writeln(LCD_ROW_1, "Settings");
-                        lcd.writeln(LCD_ROW_2, "Countdown: " + menuValue);
+                    case SETTINGS:
+                        if(selectedMenuItem == null){
+                            lcd.writeln(LCD_ROW_1, "Settings");
+                            lcd.writeln(LCD_ROW_2, highlightedMenuItem.getMenuTitle());
+                        } else {
+                            switch(selectedMenuItem){
+                                case SHOW_IP_ADDRESS:
+                                    lcd.writeln(LCD_ROW_1, highlightedMenuItem.getMenuTitle());
+                                    lcd.writeln(LCD_ROW_2, ipAddress, LCDTextAlignment.ALIGN_CENTER);
+                                    break;
+                                case EDIT_COUNTDOWN:
+                                    lcd.writeln(LCD_ROW_1, highlightedMenuItem.getMenuTitle());
+                                    lcd.writeln(LCD_ROW_2, String.valueOf(settings.getCountdownDuration() / 1000) + " seconds", LCDTextAlignment.ALIGN_CENTER);
+                                    break;
+                                case EDIT_COOLDOWN:
+                                    lcd.writeln(LCD_ROW_1, highlightedMenuItem.getMenuTitle());
+                                    lcd.writeln(LCD_ROW_2, String.valueOf(settings.getCooldownDuration() / 1000) + " seconds", LCDTextAlignment.ALIGN_CENTER);
+                                    break;
+                                case BACK:
+                                    lcd.writeln(LCD_ROW_1, highlightedMenuItem.getMenuTitle());
+                                    lcd.writeln(LCD_ROW_2, ipAddress, LCDTextAlignment.ALIGN_CENTER);
+                                    break;
+                            }
+                        }
+                        break;
                 }
 
-                if(status != AlarmStatus.MENU) Thread.sleep(1000);
-                    else Thread.sleep(500);
+                Thread.sleep(600); // Give the LCD some time to rest
 
                 sensorIndex++;
             } catch (InterruptedException e) {
-                System.out.println("Main thread aborted.");
+                log.info("Main thread aborted.");
                 break;
             }
         }
