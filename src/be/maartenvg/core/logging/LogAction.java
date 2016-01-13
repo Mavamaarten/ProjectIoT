@@ -7,5 +7,6 @@ public enum LogAction {
     COUNTDOWN_ACTIVATED,
     SIRENS_ACTIVATED,
     SHUTDOWN,
-    OTHER
+    INFORMATION,
+    INCORRECT_PIN
 }

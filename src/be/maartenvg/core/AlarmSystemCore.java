@@ -78,7 +78,7 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
         this.ipAddress = LocalIPUtility.getLocalIp();
 
         log.info("SmartAlarm started successfully");
-        actionLogger.log(LogAction.OTHER, "SmartAlarm started successfully");
+        actionLogger.log(LogAction.INFORMATION, "SmartAlarm started successfully");
         lcd.clear();
     }
 
@@ -172,8 +172,9 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
                 updateActiveSensorNames();
             }
 
+            updateActiveSensorNames();
             log.warn("One or more sensors activated: " + activeSensorNames.stream().collect(Collectors.joining(", ")));
-            actionLogger.log(LogAction.SENSOR_ACTIVATED, activeSensorNames.stream().collect(Collectors.joining(", ")));
+            if(status == AlarmStatus.ARMED || status == AlarmStatus.COUNTDOWN || status == AlarmStatus.SIRENS_ON) actionLogger.log(LogAction.SENSOR_ACTIVATED, activeSensorNames.stream().collect(Collectors.joining(", ")));
 
         } else { // No sensors are activated
 
@@ -188,7 +189,7 @@ public class AlarmSystemCore extends ArduinoListenerAdapter implements RotaryEnc
             }
 
             log.info("No more sensors active.");
-            actionLogger.log(LogAction.OTHER, "No more sensors active");
+            if(status == AlarmStatus.ARMED || status == AlarmStatus.COUNTDOWN || status == AlarmStatus.SIRENS_ON) actionLogger.log(LogAction.INFORMATION, "No more sensors active");
         }
     }
 

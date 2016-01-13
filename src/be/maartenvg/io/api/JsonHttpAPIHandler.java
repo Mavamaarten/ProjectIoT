@@ -45,7 +45,7 @@ public class JsonHttpAPIHandler implements HttpHandler {
             settings.save();
             sendOKResponse(t);
             log.warn("PIN changed to " + PIN + " by " + t.getRemoteAddress().toString());
-            actionLogger.log(LogAction.OTHER, "PIN changed to " + PIN + " by " + t.getRemoteAddress().toString());
+            actionLogger.log(LogAction.INFORMATION, "PIN changed to " + PIN + " by " + t.getRemoteAddress().toString().replace("/", ""));
         }
         else if(action.equals("arm") && PIN.equals(Settings.getInstance().getPin())){
             alarmSystemCore.arm();
@@ -56,7 +56,7 @@ public class JsonHttpAPIHandler implements HttpHandler {
             sendOKResponse(t);
         } else {
             log.warn("Incorrect PIN entered by " + t.getRemoteAddress().toString() + " (action: " + action + ", entered PIN:" + PIN + ")");
-            actionLogger.log(LogAction.OTHER, "Incorrect PIN entered by " + t.getRemoteAddress().toString() + ". Attempted action: '" + action + "'");
+            actionLogger.log(LogAction.INCORRECT_PIN, "Incorrect PIN entered by " + t.getRemoteAddress().toString().replace("/", "") + " when trying to " + action + ".");
             t.sendResponseHeaders(401, 0);
             t.close();
         }
