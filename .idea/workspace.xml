@@ -2,9 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="ddfa70c6-4ab2-484c-9801-fc292f64ddfd" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/be/maartenvg/core/menu/MenuItem.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/be/maartenvg/io/network/LocalIPUtility.java" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/be/maartenvg/settings/Settings.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/be/maartenvg/core/logging/ActionLogger.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/be/maartenvg/core/logging/LogAction.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/be/maartenvg/core/logging/LogItem.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpLogsHandler.java" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/src/be/maartenvg/threads/LcdBacklightThread.java" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/AlarmSystem/be/maartenvg/core/AlarmCooldownThread.class" afterPath="" />
       <change type="DELETED" beforePath="$PROJECT_DIR$/out/production/AlarmSystem/be/maartenvg/core/AlarmCountdownThread.class" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/AlarmSystem/be/maartenvg/Main.class" afterPath="$PROJECT_DIR$/out/production/AlarmSystem/be/maartenvg/Main.class" />
@@ -15,15 +17,11 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/AlarmSystem/be/maartenvg/io/arduino/ArduinoListener.class" afterPath="$PROJECT_DIR$/out/production/AlarmSystem/be/maartenvg/io/arduino/ArduinoListener.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/out/production/AlarmSystem/be/maartenvg/io/arduino/ArduinoListenerAdapter.class" afterPath="$PROJECT_DIR$/out/production/AlarmSystem/be/maartenvg/io/arduino/ArduinoListenerAdapter.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/be/maartenvg/Main.java" afterPath="$PROJECT_DIR$/src/be/maartenvg/Main.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/be/maartenvg/core/AlarmStatus.java" afterPath="$PROJECT_DIR$/src/be/maartenvg/core/AlarmStatus.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/be/maartenvg/core/AlarmSystemCore.java" afterPath="$PROJECT_DIR$/src/be/maartenvg/core/AlarmSystemCore.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/be/maartenvg/core/menu/MenuItem.java" afterPath="$PROJECT_DIR$/src/be/maartenvg/core/menu/MenuItem.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpAPIHandler.java" afterPath="$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpAPIHandler.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/be/maartenvg/io/arduino/Arduino.java" afterPath="$PROJECT_DIR$/src/be/maartenvg/io/arduino/Arduino.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/be/maartenvg/io/arduino/ArduinoListener.java" afterPath="$PROJECT_DIR$/src/be/maartenvg/io/arduino/ArduinoListener.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/be/maartenvg/io/arduino/ArduinoListenerAdapter.java" afterPath="$PROJECT_DIR$/src/be/maartenvg/io/arduino/ArduinoListenerAdapter.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/be/maartenvg/core/AlarmCooldownThread.java" afterPath="$PROJECT_DIR$/src/be/maartenvg/threads/AlarmCooldownThread.java" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/src/be/maartenvg/core/AlarmCountdownThread.java" afterPath="$PROJECT_DIR$/src/be/maartenvg/threads/AlarmCountdownThread.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/be/maartenvg/settings/Settings.java" afterPath="$PROJECT_DIR$/src/be/maartenvg/settings/Settings.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/be/maartenvg/threads/AlarmCountdownThread.java" afterPath="$PROJECT_DIR$/src/be/maartenvg/threads/AlarmCountdownThread.java" />
     </list>
     <ignored path="PCFReaderWriter.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -46,11 +44,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="Main.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Main.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/be/maartenvg/Main.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.33519554">
-              <caret line="26" column="42" selection-start-line="26" selection-start-column="42" selection-end-line="26" selection-end-column="42" />
+            <state vertical-scroll-proportion="0.0">
+              <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -62,7 +60,7 @@
         <entry file="file://$PROJECT_DIR$/src/be/maartenvg/core/AlarmSystemCore.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="270" column="58" selection-start-line="270" selection-start-column="58" selection-end-line="270" selection-end-column="58" />
+              <caret line="81" column="20" selection-start-line="81" selection-start-column="20" selection-end-line="81" selection-end-column="20" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -70,24 +68,41 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MenuItem.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/be/maartenvg/core/menu/MenuItem.java">
+      <file leaf-file-name="LogItem.java" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/be/maartenvg/core/logging/LogItem.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0">
-              <caret line="6" column="29" selection-start-line="6" selection-start-column="29" selection-end-line="6" selection-end-column="29" />
-              <folding>
-                <element signature="e#726#727#0" expanded="true" />
-                <element signature="e#773#774#0" expanded="true" />
-              </folding>
+            <state vertical-scroll-proportion="0.37988827">
+              <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="AlarmStatus.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/be/maartenvg/core/AlarmStatus.java">
+      <file leaf-file-name="JsonHttpAPIHandler.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpAPIHandler.java">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.0">
-              <caret line="7" column="12" selection-start-line="7" selection-start-column="12" selection-end-line="7" selection-end-column="12" />
+              <caret line="58" column="150" selection-start-line="58" selection-start-column="150" selection-end-line="58" selection-end-column="150" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JsonHttpStatusHandler.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpStatusHandler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="32" column="19" selection-start-line="32" selection-start-column="19" selection-end-line="32" selection-end-column="19" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="JsonHttpLogsHandler.java" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpLogsHandler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0">
+              <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -143,19 +158,24 @@
         <option value="$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpHandler.java" />
         <option value="$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpStatusHandler.java" />
         <option value="$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpArmHandler.java" />
-        <option value="$PROJECT_DIR$/src/be/maartenvg/settings/Settings.java" />
         <option value="$PROJECT_DIR$/src/be/maartenvg/threads/AlarmCooldownThread.java" />
-        <option value="$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpAPIHandler.java" />
-        <option value="$PROJECT_DIR$/src/be/maartenvg/threads/AlarmCountdownThread.java" />
         <option value="$PROJECT_DIR$/src/be/maartenvg/core/AlarmStatus.java" />
         <option value="$PROJECT_DIR$/src/be/maartenvg/core/menu/MenuItems.java" />
         <option value="$PROJECT_DIR$/src/be/maartenvg/io/network/LocalIPUtility.java" />
         <option value="$PROJECT_DIR$/src/simplelog.properties" />
         <option value="$PROJECT_DIR$/src/log4j.properties" />
         <option value="$PROJECT_DIR$/src/commons-logging.properties" />
-        <option value="$PROJECT_DIR$/src/be/maartenvg/core/AlarmSystemCore.java" />
-        <option value="$PROJECT_DIR$/src/be/maartenvg/core/menu/MenuItem.java" />
         <option value="$PROJECT_DIR$/src/be/maartenvg/Main.java" />
+        <option value="$PROJECT_DIR$/src/be/maartenvg/settings/Settings.java" />
+        <option value="$PROJECT_DIR$/src/be/maartenvg/threads/LcdBacklightThread.java" />
+        <option value="$PROJECT_DIR$/src/be/maartenvg/core/menu/MenuItem.java" />
+        <option value="$PROJECT_DIR$/src/be/maartenvg/core/logging/LogAction.java" />
+        <option value="$PROJECT_DIR$/src/be/maartenvg/core/logging/ActionLogger.java" />
+        <option value="$PROJECT_DIR$/src/be/maartenvg/threads/AlarmCountdownThread.java" />
+        <option value="$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpLogsHandler.java" />
+        <option value="$PROJECT_DIR$/src/be/maartenvg/core/logging/LogItem.java" />
+        <option value="$PROJECT_DIR$/src/be/maartenvg/core/AlarmSystemCore.java" />
+        <option value="$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpAPIHandler.java" />
       </list>
     </option>
   </component>
@@ -275,6 +295,28 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="threads" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="AlarmSystem" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="LCD" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="maartenvg" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="settings" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -319,6 +361,32 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
+              <option name="myItemId" value="io" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="api" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="AlarmSystem" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="LCD" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="maartenvg" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
               <option name="myItemId" value="core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
@@ -345,7 +413,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="menu" />
+              <option name="myItemId" value="logging" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -382,17 +450,17 @@
     <property name="Repository.Attach.Sources" value="false" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="D:\OneDrive\Java Projects\PCFReaderWriter\src\com\mava" />
-      <recent name="D:\OneDrive\Java Projects\PCFReaderWriter\src\com\mava\IO" />
-    </key>
-    <key name="CopyClassDialog.RECENTS_KEY">
-      <recent name="be.maartenvg.io.api" />
-    </key>
     <key name="CreateClassDialog.RecentsKey">
       <recent name="be.maartenvg.io.parse" />
       <recent name="be.maartenvg.core" />
       <recent name="com.mava.IO" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="be.maartenvg.io.api" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\OneDrive\Java Projects\PCFReaderWriter\src\com\mava" />
+      <recent name="D:\OneDrive\Java Projects\PCFReaderWriter\src\com\mava\IO" />
     </key>
   </component>
   <component name="RunManager" selected="Application.Main (1)">
@@ -867,7 +935,7 @@
       <workItem from="1450288426082" duration="6709000" />
       <workItem from="1450359208780" duration="5059000" />
       <workItem from="1450444154581" duration="14000" />
-      <workItem from="1452685819168" duration="4648000" />
+      <workItem from="1452685819168" duration="10253000" />
     </task>
     <task id="LOCAL-00001" summary="Reworked status API,&#10;Added extra data to push messages">
       <created>1449774975172</created>
@@ -881,11 +949,17 @@
       <option name="project" value="LOCAL" />
       <updated>1449931670374</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Added improved menu system,&#10;Added settings (replaces hardcoded values),&#10;Now using I²C LCD instead of GPIO based LCD">
+      <created>1452690549148</created>
+      <option name="number" value="00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1452690549148</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="72326000" />
+    <option name="totallyTimeSpent" value="77931000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
@@ -933,7 +1007,8 @@
     <option name="CHECK_NEW_TODO" value="false" />
     <MESSAGE value="Reworked status API,&#10;Added extra data to push messages" />
     <MESSAGE value="Added API for arming/disarming,&#10;Send push notification on status change so app is always in sync" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added API for arming/disarming,&#10;Send push notification on status change so app is always in sync" />
+    <MESSAGE value="Added improved menu system,&#10;Added settings (replaces hardcoded values),&#10;Now using I²C LCD instead of GPIO based LCD" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added improved menu system,&#10;Added settings (replaces hardcoded values),&#10;Now using I²C LCD instead of GPIO based LCD" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -946,33 +1021,6 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/core/AlarmSystemCore.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="173" column="35" selection-start-line="173" selection-start-column="35" selection-end-line="173" selection-end-column="35" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/io/parse/ParsePush.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="35" column="1" selection-start-line="35" selection-start-column="1" selection-end-line="35" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/threads/AlarmCountdownThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/be/maartenvg/core/AlarmSystemCore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
@@ -1270,46 +1318,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpStatusHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="32" column="19" selection-start-line="32" selection-start-column="19" selection-end-line="32" selection-end-column="19" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/be/maartenvg/threads/AlarmCooldownThread.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.6268156">
           <caret line="41" column="42" selection-start-line="41" selection-start-column="42" selection-end-line="41" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpAPIHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.66480446">
-          <caret line="47" column="30" selection-start-line="47" selection-start-column="30" selection-end-line="47" selection-end-column="30" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/threads/AlarmCountdownThread.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.85602677">
-          <caret line="68" column="23" selection-start-line="68" selection-start-column="23" selection-end-line="68" selection-end-column="23" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/core/AlarmStatus.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0">
-          <caret line="7" column="12" selection-start-line="7" selection-start-column="12" selection-end-line="7" selection-end-column="12" />
           <folding />
         </state>
       </provider>
@@ -1319,49 +1331,133 @@
         <state vertical-scroll-proportion="0.3039106">
           <caret line="16" column="0" selection-start-line="16" selection-start-column="0" selection-end-line="16" selection-end-column="0" />
           <folding>
-            <element signature="imports" expanded="true" />
+            <element signature="imports" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/threads/LcdBacklightThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.037988827">
+          <caret line="2" column="18" selection-start-line="2" selection-start-column="18" selection-end-line="2" selection-end-column="18" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/be/maartenvg/settings/Settings.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.37318435">
-          <caret line="44" column="5" selection-start-line="44" selection-start-column="5" selection-end-line="44" selection-end-column="5" />
+        <state vertical-scroll-proportion="0.0">
+          <caret line="84" column="0" selection-start-line="84" selection-start-column="0" selection-end-line="84" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/core/logging/ActionLogger.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.6268156">
+          <caret line="33" column="0" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#511#512#0" expanded="true" />
+            <element signature="e#544#545#0" expanded="true" />
+            <element signature="e#584#585#0" expanded="true" />
+            <element signature="e#629#630#0" expanded="true" />
+            <element signature="e#689#690#0" expanded="true" />
+            <element signature="e#747#748#0" expanded="true" />
+            <element signature="e#785#786#0" expanded="true" />
+            <element signature="e#842#843#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/threads/AlarmCountdownThread.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8357542">
+          <caret line="73" column="55" selection-start-line="73" selection-start-column="55" selection-end-line="73" selection-end-column="55" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/core/logging/LogAction.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.17094973">
+          <caret line="9" column="9" selection-start-line="9" selection-start-column="9" selection-end-line="9" selection-end-column="9" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="35" column="0" selection-start-line="35" selection-start-column="0" selection-end-line="35" selection-end-column="0" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpStatusHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="32" column="19" selection-start-line="32" selection-start-column="19" selection-end-line="32" selection-end-column="19" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/core/AlarmStatus.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.1329609">
+          <caret line="7" column="12" selection-start-line="7" selection-start-column="12" selection-end-line="7" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/core/menu/MenuItem.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.1519553">
+          <caret line="8" column="29" selection-start-line="8" selection-start-column="29" selection-end-line="8" selection-end-column="29" />
+          <folding>
+            <element signature="e#797#798#0" expanded="false" />
+            <element signature="e#844#845#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpLogsHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0">
+          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/be/maartenvg/core/AlarmSystemCore.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="270" column="58" selection-start-line="270" selection-start-column="58" selection-end-line="270" selection-end-column="58" />
+          <caret line="81" column="20" selection-start-line="81" selection-start-column="20" selection-end-line="81" selection-end-column="20" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/core/menu/MenuItem.java">
+    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/io/api/JsonHttpAPIHandler.java">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0">
-          <caret line="6" column="29" selection-start-line="6" selection-start-column="29" selection-end-line="6" selection-end-column="29" />
-          <folding>
-            <element signature="e#726#727#0" expanded="true" />
-            <element signature="e#773#774#0" expanded="true" />
-          </folding>
+          <caret line="58" column="150" selection-start-line="58" selection-start-column="150" selection-end-line="58" selection-end-column="150" />
+          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/Main.java">
+    <entry file="file://$PROJECT_DIR$/src/be/maartenvg/core/logging/LogItem.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33519554">
-          <caret line="26" column="42" selection-start-line="26" selection-start-column="42" selection-end-line="26" selection-end-column="42" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.37988827">
+          <caret line="20" column="0" selection-start-line="20" selection-start-column="0" selection-end-line="20" selection-end-column="0" />
+          <folding />
         </state>
       </provider>
     </entry>

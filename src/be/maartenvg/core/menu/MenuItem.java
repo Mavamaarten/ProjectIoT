@@ -4,7 +4,9 @@ public enum MenuItem {
     SHOW_IP_ADDRESS(0, "Show IP Address"),
     EDIT_COUNTDOWN(1, "Countdown delay"),
     EDIT_COOLDOWN(2, "Cooldown delay"),
-    BACK(3, "Go back (arm)");
+    EDIT_BACKLIGHT(3, "Backlight T-out"),
+    SHUTDOWN(4, "Shutdown"),
+    BACK(5, "Go back (arm)");
 
     private int value;
     private String menuTitle;

@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 public class Settings {
     private static Settings settingsInstance;
 
-    private int countdownDuration, cooldownDuration;
+    private int countdownDuration, cooldownDuration, backlightTimeout;
     private String pin;
 
     private Settings(){}
@@ -31,11 +31,13 @@ public class Settings {
             JSONObject jsonObject = new JSONObject(json);
             countdownDuration = jsonObject.getInt("countdownDuration");
             cooldownDuration = jsonObject.getInt("cooldownDuration");
+            backlightTimeout = jsonObject.getInt("backlightTimeout");
             pin = jsonObject.getString("pin");
         } catch(NoSuchFileException e){
             System.out.println("No settings found. Generating default settings.json");
             countdownDuration = 10000;
             cooldownDuration = 2 * 60000;
+            backlightTimeout = 10000;
             pin = "1234";
             save();
         }
@@ -48,6 +50,7 @@ public class Settings {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("countdownDuration", countdownDuration);
         jsonObject.put("cooldownDuration", cooldownDuration);
+        jsonObject.put("backlightTimeout", backlightTimeout);
         jsonObject.put("pin", pin);
 
         try {
@@ -74,6 +77,14 @@ public class Settings {
 
     public void setCooldownDuration(int cooldownDuration) {
         this.cooldownDuration = cooldownDuration;
+    }
+
+    public int getBacklightTimeout() {
+        return backlightTimeout;
+    }
+
+    public void setBacklightTimeout(int backlightTimeout) {
+        this.backlightTimeout = backlightTimeout;
     }
 
     public String getPin() {

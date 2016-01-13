@@ -1,6 +1,8 @@
 package be.maartenvg.io.api;
 
 import be.maartenvg.core.AlarmSystemCore;
+import be.maartenvg.core.logging.ActionLogger;
+import be.maartenvg.core.logging.LogAction;
 import be.maartenvg.settings.Settings;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -18,6 +20,7 @@ public class JsonHttpAPIHandler implements HttpHandler {
     private final AlarmSystemCore alarmSystemCore;
     private final Settings settings;
     private final Log log = LogFactory.getLog(JsonHttpAPIHandler.class);
+    private final ActionLogger actionLogger = ActionLogger.getInstance();
 
     public JsonHttpAPIHandler(AlarmSystemCore alarmSystemCore) {
         this.alarmSystemCore = alarmSystemCore;
@@ -41,7 +44,8 @@ public class JsonHttpAPIHandler implements HttpHandler {
             settings.setPin(PIN);
             settings.save();
             sendOKResponse(t);
-            log.warn("PIN changed to " + PIN);
+            log.warn("PIN changed to " + PIN + " by " + t.getRemoteAddress().toString());
+            actionLogger.log(LogAction.OTHER, "PIN changed to " + PIN + " by " + t.getRemoteAddress().toString());
         }
         else if(action.equals("arm") && PIN.equals(Settings.getInstance().getPin())){
             alarmSystemCore.arm();
@@ -52,6 +56,7 @@ public class JsonHttpAPIHandler implements HttpHandler {
             sendOKResponse(t);
         } else {
             log.warn("Incorrect PIN entered by " + t.getRemoteAddress().toString() + " (action: " + action + ", entered PIN:" + PIN + ")");
+            actionLogger.log(LogAction.OTHER, "Incorrect PIN entered by " + t.getRemoteAddress().toString() + ". Attempted action: '" + action + "'");
             t.sendResponseHeaders(401, 0);
             t.close();
         }

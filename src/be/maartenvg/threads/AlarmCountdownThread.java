@@ -2,6 +2,8 @@ package be.maartenvg.threads;
 
 import be.maartenvg.core.AlarmStatus;
 import be.maartenvg.core.AlarmSystemCore;
+import be.maartenvg.core.logging.ActionLogger;
+import be.maartenvg.core.logging.LogAction;
 import be.maartenvg.io.arduino.Arduino;
 import be.maartenvg.io.arduino.ArduinoCommand;
 import be.maartenvg.io.parse.PushMessageAPI;
@@ -25,6 +27,7 @@ public class AlarmCountdownThread extends Thread {
     private final List<String> triggeredSensors;
     private final int delay;
     private final Log log = LogFactory.getLog(AlarmCountdownThread.class);
+    private final ActionLogger actionLogger = ActionLogger.getInstance();
 
     public AlarmCountdownThread(AlarmSystemCore alarmSystemCore, I2CLcdDisplay lcd, Arduino arduino, PushMessageAPI pushMessageAPI, List<String> triggeredSensors, int delay) {
         this.alarmSystemCore = alarmSystemCore;
@@ -42,6 +45,7 @@ public class AlarmCountdownThread extends Thread {
         alarmSystemCore.setStatus(AlarmStatus.COUNTDOWN);
 
         log.warn("Sensor(s) activated: countdown initiated. Triggered sensor(s): " + triggeredSensors.stream().collect(Collectors.joining(",")));
+        actionLogger.log(LogAction.COUNTDOWN_ACTIVATED, "Sensor(s) that triggered countdown: " + triggeredSensors.stream().collect(Collectors.joining(",")));
 
         JSONObject object = new JSONObject();
         object.put("activeSensors", triggeredSensors);
@@ -67,6 +71,7 @@ public class AlarmCountdownThread extends Thread {
             object.put("activeSensors", triggeredSensors);
             pushMessageAPI.sendPushMessage("Intrusion alert!", "Alarm sirens activated.", object.toString());
             log.warn("Alarm sirens activated: countdown ended");
+            actionLogger.log(LogAction.SIRENS_ACTIVATED);
         }
     }
 }
